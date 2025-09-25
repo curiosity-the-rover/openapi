@@ -1,0 +1,109 @@
+package v3_1
+
+import "github.com/sv-tools/openapi/common"
+
+// RequestBody describes a single request body.
+//
+// https://spec.openapis.org/oas/v3.1.1#request-body-object
+//
+// Example:
+//
+//	description: user to add to the system
+//	content:
+//	  'application/json':
+//	    schema:
+//	      $ref: '#/components/schemas/User'
+//	    examples:
+//	      user:
+//	        summary: User Example
+//	        externalValue: 'https://foo.bar/examples/user-example.json'
+//	  'application/xml':
+//	    schema:
+//	      $ref: '#/components/schemas/User'
+//	    examples:
+//	      user:
+//	        summary: User example in XML
+//	        externalValue: 'https://foo.bar/examples/user-example.xml'
+//	  'text/plain':
+//	    examples:
+//	      user:
+//	        summary: User example in Plain text
+//	        externalValue: 'https://foo.bar/examples/user-example.txt'
+//	  '*/*':
+//	    examples:
+//	      user:
+//	        summary: User example in other format
+//	        externalValue: 'https://foo.bar/examples/user-example.whatever'
+type RequestBody struct {
+	// REQUIRED.
+	// The content of the request body.
+	// The key is a media type or [media type range](appendix-D) and the value describes it.
+	// For requests that match multiple keys, only the most specific key is applicable. e.g. text/plain overrides text/*
+	Content map[string]*common.Extendable[MediaType] `json:"content,omitempty" yaml:"content,omitempty"`
+	// A brief description of the request body.
+	// This could contain examples of use.
+	// CommonMark syntax MAY be used for rich text representation.
+	Description string `json:"description,omitempty" yaml:"description,omitempty"`
+	// Determines if the request body is required in the request.
+	// Defaults to false.
+	Required bool `json:"required,omitempty" yaml:"required,omitempty"`
+}
+
+func (o *RequestBody) validateSpec(location string, validator *common.Validator) []*common.validationError {
+	var errs []*common.validationError
+	if len(o.Content) == 0 {
+		errs = append(errs, common.newValidationError(common.joinLoc(location, "content"), common.ErrRequired))
+	} else {
+		for k, v := range o.Content {
+			errs = append(errs, v.validateSpec(common.joinLoc(location, "content", k), validator)...)
+		}
+	}
+	return errs
+}
+
+type RequestBodyBuilder struct {
+	spec *common.RefOrSpec[common.Extendable[RequestBody]]
+}
+
+func NewRequestBodyBuilder() *RequestBodyBuilder {
+	return &RequestBodyBuilder{
+		spec: common.NewRefOrExtSpec[RequestBody](&RequestBody{}),
+	}
+}
+
+func (b *RequestBodyBuilder) Build() *common.RefOrSpec[common.Extendable[RequestBody]] {
+	return b.spec
+}
+
+func (b *RequestBodyBuilder) Extensions(v map[string]any) *RequestBodyBuilder {
+	b.spec.Spec.Extensions = v
+	return b
+}
+
+func (b *RequestBodyBuilder) AddExt(name string, value any) *RequestBodyBuilder {
+	b.spec.Spec.AddExt(name, value)
+	return b
+}
+
+func (b *RequestBodyBuilder) Content(v map[string]*common.Extendable[MediaType]) *RequestBodyBuilder {
+	b.spec.Spec.Spec.Content = v
+	return b
+}
+
+func (b *RequestBodyBuilder) AddContent(key string, value *common.Extendable[MediaType]) *RequestBodyBuilder {
+	if b.spec.Spec.Spec.Content == nil {
+		b.spec.Spec.Spec.Content = make(map[string]*common.Extendable[MediaType], 1)
+	}
+	b.spec.Spec.Spec.Content[key] = value
+	return b
+}
+
+func (b *RequestBodyBuilder) Description(v string) *RequestBodyBuilder {
+	b.spec.Spec.Spec.Description = v
+	return b
+}
+
+func (b *RequestBodyBuilder) Required(v bool) *RequestBodyBuilder {
+	b.spec.Spec.Spec.Required = v
+	return b
+}

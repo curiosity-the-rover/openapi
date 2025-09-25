@@ -1,22 +1,25 @@
-# OpenAPI v3.1 Specification
+# OpenAPI Specification
 
 [![Code Analysis](https://github.com/sv-tools/openapi/actions/workflows/code.yaml/badge.svg)](https://github.com/sv-tools/openapi/actions/workflows/code.yaml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/sv-tools/openapi.svg)](https://pkg.go.dev/github.com/sv-tools/openapi)
 [![codecov](https://codecov.io/gh/sv-tools/openapi/branch/main/graph/badge.svg?token=0XVOTDR1CW)](https://codecov.io/gh/sv-tools/openapi)
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/sv-tools/openapi?style=flat)](https://github.com/sv-tools/openapi/releases)
 
-The implementation of OpenAPI v3.1 Specification for Go using generics.
+The implementation of OpenAPI Specifications for Go.
 
 ```shell
 go get github.com/sv-tools/openapi
 ```
 
+## Support Versions
+
+* v3.2
+* v3.1
+
 ## Supported Go versions
 
 * v1.25
 * v1.24
-* v1.23
-* v1.22
 
 ## Versions
 
@@ -32,6 +35,8 @@ go get github.com/sv-tools/openapi
   * Added `ParseObject` function to create `SchemaBuilder` by parsing an object.
     The function supports `json`, `yaml` and `openapi` field tags for the structs.
   * Use OpenAPI `v3.1.1` by default.
+* v2 - Moved the specification to v3_1 folder to support multiple versions.
+  * Added support of v3.2 specification.
 
 ## Features
 
